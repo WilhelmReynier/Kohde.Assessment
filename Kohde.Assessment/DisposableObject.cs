@@ -13,23 +13,21 @@ namespace Kohde.Assessment
 
         public void PerformSomeLongRunningOperation()
         {
+            this.SomethingHappened += HandleSomethingHappened;//Moved outside so event handler is only called once to avoid multiple subscriptions.
             foreach (var i in Enumerable.Range(1, 10))
             {
-                this.SomethingHappened += HandleSomethingHappened;
+               //some long running code 
             }
         }
 
         public void RaiseEvent(string data)
         {
-            if (this.SomethingHappened != null)
-            {
-                this.SomethingHappened(data);
-            }
+           SomethingHappened?.Invoke(data);//condensed code
         }
 
         private void HandleSomethingHappened(string foo)
         {
-            this.Counter = this.Counter + 1;
+            this.Counter++;//condensed counter increase
             Console.WriteLine("HIT {0} => HandleSomethingHappened. Data: {1}", this.Counter, foo);
         }
 
@@ -37,7 +35,13 @@ namespace Kohde.Assessment
         {
             if (disposing)
             {
-                // Dispose managed resources
+               if(SomethingHappened != null)//making sure that the event handler is properly unsubscribed by checking if it is not null before attempting to remove event handlers.
+                {
+                    foreach(var d in SomethingHappened.GetInvocationList())//get list of delegates subscribed to event and remove them from the event invocation list
+                    {
+                        SomethingHappened -= (MyEventHandler)(d);
+                    }
+                }
             }
 
             // Free native resources
