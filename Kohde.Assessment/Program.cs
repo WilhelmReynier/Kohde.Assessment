@@ -294,8 +294,12 @@ namespace Kohde.Assessment
             Console.WriteLine("Name:" + mammal.Name + " Age: " + mammal.Age);
         }
 
-        public static TOut GenericTester<TIn, TOut>(Func<TIn, TOut> func, TIn input)
+        public static TOut GenericTester<TIn, TOut>(Func<TIn, TOut> func, TIn input) where TIn : class, new()
         {
+            if(input == null)
+            {
+               input = Activator.CreateInstance<TIn>(); 
+            }
             return func(input);
         }
 
