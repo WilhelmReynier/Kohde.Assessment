@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Diagnostics;
 using System.Linq;
+using System.Reflection;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
 
@@ -334,8 +335,19 @@ namespace Kohde.Assessment
             // CALL THE FOLLOWING METHOD: DisplaySomeStuff [WHICH IN JUST BELOW THIS ONE]
             // AND RETURN THE STRING CONTENT
 
+            //Get the type of the current Class
+            Type type = typeof(Program);
+            
+            //Get the method info for DisplaSomeStuff
+            MethodInfo methodInfo = type.GetMethod("DisplaySomeStuff", BindingFlags.Public | BindingFlags.Static);
+            //Make the method generic with a specific type
+            MethodInfo genericMethodInfo = methodInfo.MakeGenericMethod(typeof(string));
+            //Invoke the method with a specific param
+            object result = genericMethodInfo.Invoke(null, new object[] { "Khode is great" });
+
+            return (string)result;
             // DO NOT CHANGE THE NAME, RETURN TYPE OR ANY IMPLEMENTATION OF THIS METHOD NOR THE BELOW METHOD
-            throw new NotImplementedException(); // ATT: REMOVE THIS LINE
+            // throw new NotImplementedException(); // ATT: REMOVE THIS LINE
         }
 
         public static string DisplaySomeStuff<T>(T toDisplay) where T : class
